@@ -1,0 +1,20 @@
+{
+  "server": {
+    "app": {
+      "slogan": "We love beers"
+    }
+  },
+  "connections": [
+    {
+      "port": 3000,
+      "labels": ["api"]
+    }
+  ],
+  "registrations": [
+    {
+      "plugin": {
+        "register": "./beers"
+      }
+    }
+  ]
+}

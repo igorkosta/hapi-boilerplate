@@ -1,0 +1,38 @@
+{
+  "name": "appstore",
+  "version": "0.0.1",
+  "description": "Drink more beers",
+  "main": "index.js",
+  "scripts": {
+    "test": "lab -t 100",
+    "test-cov-html": "lab -r html -o coverage.html"
+  },
+  "author": "chutzpah",
+  "license": "ISC",
+  "dependencies": {
+    "boom": "^3.2.1",
+    "glue": "^3.3.0",
+    "hapi": "^13.4.1",
+    "inert": "^4.0.0",
+    "mongojs": "^2.4.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "code": "^3.0.2",
+    "hapi": "^13.5.3",
+    "lab": "^10.9.0",
+    "pow-mongodb-fixtures": "^0.12.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://igor_kosta@bitbucket.org/igor_kosta/appstore.git"
+  },
+  "keywords": [
+    "beers",
+    "ipas",
+    "pale ales"
+  ]
+}
