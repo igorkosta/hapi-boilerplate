@@ -10,8 +10,8 @@ The structure is quite easy:
 ** in the boilerplate you'll find the `manifest.json` inside - it's used by `Glue` to provision the server
 * `test` folder, contains of the tests and `fixtures`
 * `lib` folder - folder for your routes
-** `modules` - holds all the resources
-*** `beers` - represents a folder with everything related to beers. It consists of following folders/files:
+* `modules` - holds all the resources
+* `beers` - represents a folder with everything related to beers. It consists of following folders/files:
 
 * `index.js` - describes which operations can be performed on `beers` resource
 * `package.json` - describes the `beers` plugin - `name` and `version`
