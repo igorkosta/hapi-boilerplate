@@ -14,7 +14,7 @@ var beers = exports.beers = {
     type: "Lager",
     alcohol: "7.7"
   },
-  beer1: {
+  beer3: {
     _id: id('4ed2b809d7446b9a0e000014'),
     name: "Dark Beer from Hell",
     type: "Dark Beer",
