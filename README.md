@@ -1,3 +1,40 @@
+# Prerequisites
+If you haven't installed `brew` on your machine yet - do it `fucking` NOW
+```
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+1. MongoDB
+
+```
+brew update
+```
+
+Install with or without SSL/TLS support:
+
+```
+brew install mongodb
+```
+
+or
+
+```
+brew install mongodb --with-openssl
+```
+
+2. node && npm
+```
+brew install node
+```
+
+It should install `npm` as well.
+
+3. install node_modules
+From the `hapi-bolerplate` directory run:
+```
+npm install
+```
+
 # Boilerplate for the next hapi based application
 Things might change
 
