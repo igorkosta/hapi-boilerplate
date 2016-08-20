@@ -18,3 +18,6 @@ The structure is quite easy:
 * `handlers` folder - keeps all handler files e.g. `createBeer.js`/`updateBeer.js`/`getBeers.js`/`getBeer.js`/`deleteBeer.js` etc.
 * `schemas` folder - holds `Joi` validation schemas for any operation you need e.g. `beer.js`/`createBeer.js` etc.
 * `utils` - any additional stuff your `beers` need e.g. `calculateAlc.js` etc.
+
+# Postman Collection to play around
+https://www.getpostman.com/collections/bc43899d045d6a2ad1e0
