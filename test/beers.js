@@ -22,6 +22,7 @@ const expect = Code.expect
 lab.experiment('Beers module', () => {
 
   lab.beforeEach((done) => {
+
     fixtures.clear(function(err) {
       if (err) {
         return reply(Boom.badData('Could not clear the database', err));
@@ -31,7 +32,7 @@ lab.experiment('Beers module', () => {
         if (err) {
           return reply(Boom.badData('Could not load fixtures', err))
         }
-        
+
         done();
       });
     });
@@ -53,11 +54,42 @@ lab.experiment('Beers module', () => {
         }
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(201);
+        expect(response.statusCode).to.equal(201);
         chai.expect(response.result).to.be.json;
         expect(response.result).to.include( { name: "IPA from Paradise",
                                               type: "IPA",
                                               alcohol: 6.6
+                                          } )
+        done()
+      })
+    })
+  });
+
+  lab.test('tries to put a put a beer on the shelf and the db connection drops', (done) => {
+    var server = new Hapi.Server()
+    server.connection();
+    const db = mongojs('beerstore_test');
+    server.app.db = db;
+    // emulates dropped db connection
+    db.close();
+    // emulates dropped db connection
+    server.register(beers, (err) => {
+      expect(err).to.not.exist()
+      var options = {
+        method: 'POST',
+        url: '/beers',
+        payload: {
+          name: "IPA from Paradise",
+          type: "IPA",
+          alcohol: "6.6"
+        }
+      }
+      server.inject(options, (response) => {
+        expect(response.statusCode).to.equal(422);
+        expect(response.result).to.include( {
+                                              "statusCode": 422,
+                                              "error": "Unprocessable Entity",
+                                              "message": "Internal MongoDB error"
                                           } )
         done()
       })
@@ -75,11 +107,35 @@ lab.experiment('Beers module', () => {
         url: '/beers'
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(200);
+        expect(response.statusCode).to.equal(200);
         chai.expect(response.result).to.be.json;
         chai.expect(response.result).to.be.an.array;
         chai.expect(response.result).to.have.length(3);
         done()
+      })
+    })
+  });
+
+  lab.test('tries to get a list of beers and db connection drops', (done) => {
+    var server = new Hapi.Server()
+    server.connection();
+    const db = mongojs('beerstore_test');
+    server.app.db = db;
+    db.close();
+    server.register(beers, (err) => {
+      expect(err).to.not.exist()
+      var options = {
+        method: 'GET',
+        url: '/beers'
+      }
+      server.inject(options, (response) => {
+        expect(response.statusCode).to.equal(422);
+        expect(response.result).to.include( {
+                                              "statusCode": 422,
+                                              "error": "Unprocessable Entity",
+                                              "message": "Internal MongoDB error"
+                                          } )
+        done();
       })
     })
   });
@@ -95,7 +151,7 @@ lab.experiment('Beers module', () => {
         url: '/beers/4ed2b809d7446b9a0e000014'
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(200);
+        expect(response.statusCode).to.equal(200);
         chai.expect(response.result).to.be.json;
         chai.expect(response.result).to.include( { // _id: id("4ed2b809d7446b9a0e000014"), //still have to figure this mongo _id shit out
                                                    name: "Dark Beer from Hell",
@@ -120,7 +176,7 @@ lab.experiment('Beers module', () => {
         url: '/beers/4ed2b809d7446b9a0e000666'
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(404);
+        expect(response.statusCode).to.equal(404);
         chai.expect(response.result).to.be.json;
         expect(response.result).to.include( {
                                               "statusCode": 404,
@@ -143,7 +199,7 @@ lab.experiment('Beers module', () => {
         url: '/beers/foobar'
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(400);
+        expect(response.statusCode).to.equal(400);
         chai.expect(response.result).to.be.json;
         expect(response.result).to.include( {
                                               "statusCode": 400,
@@ -173,11 +229,38 @@ lab.experiment('Beers module', () => {
         url: '/beers/4ed2b809d7446b9a0e000014'
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(204);
+        expect(response.statusCode).to.equal(204);
         done()
       })
     })
   });
+
+  lab.test('tries to delete a beer and connection to db drops', (done) => {
+    var server = new Hapi.Server()
+    server.connection();
+    const db = mongojs('beerstore_test');
+    server.app.db = db;
+    // emulates dropped db connection
+    db.close();
+    // emulates dropped db connection
+    server.register(beers, (err) => {
+      expect(err).to.not.exist()
+      var options = {
+        method: 'DELETE',
+        url: '/beers/4ed2b809d7446b9a0e000014'
+      }
+      server.inject(options, (response) => {
+        expect(response.statusCode).to.equal(422);
+        expect(response.result).to.include( {
+                                              "statusCode": 422,
+                                              "error": "Unprocessable Entity",
+                                              "message": "Internal MongoDB error"
+                                          } )
+        done()
+      })
+    })
+  });
+
 
   lab.test('tries to delete a beer that does not exist', (done) => {
     var server = new Hapi.Server()
@@ -190,7 +273,7 @@ lab.experiment('Beers module', () => {
         url: '/beers/4ed2b809d7446b9a0e000015'
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(404);
+        expect(response.statusCode).to.equal(404);
         expect(response.result).to.include( {
                                               "statusCode": 404,
                                               "error": "Not Found"
@@ -217,34 +300,68 @@ lab.experiment('Beers module', () => {
         }
       }
       server.inject(options, (response) => {
-        Code.expect(response.statusCode).to.equal(204);
+        expect(response.statusCode).to.equal(204);
         done()
       })
     })
   });
 
-  // lab.test('updates a beer and connection to mongo disappears', (done) => {
-  //   var server = new Hapi.Server()
-  //   server.connection();
-  //   // server.app.db  =  mongojs( 'beerstore_test', ['bots'], {connectionTimeout: 3000} );
-  //   server.app.db = mongojs('mongodb://localhost:27017/beerstore_test')
-  //
-  //   server.register(beers, (err) => {
-  //     expect(err).to.not.exist()
-  //     var options = {
-  //       method: 'PATCH',
-  //       url: '/beers/4ed2b809d7446b9a0e000014',
-  //       payload: {
-  //         name: "Dark Beer from Hell Strikes Back",
-  //         type: "Dark Beer",
-  //         alcohol: "8.8"
-  //       }
-  //     }
-  //     server.inject(options, (response) => {
-  //       Code.expect(response.statusCode).to.equal(204);
-  //       done()
-  //     })
-  //   })
-  // });
+  lab.test('tries to update a beer and connection to db drops', (done) => {
+    var server = new Hapi.Server()
+    server.connection();
+    const db = mongojs('beerstore_test');
+    server.app.db = db;
+    // emulates dropped db connection
+    db.close();
+    // emulates dropped db connection
+    server.register(beers, (err) => {
+      expect(err).to.not.exist()
+      var options = {
+        method: 'PATCH',
+        url: '/beers/4ed2b809d7446b9a0e000014',
+        payload: {
+          name: "Dark Beer from Hell Strikes Back and becomes Lager",
+          type: "Lager",
+          alcohol: "8.8"
+        }
+      }
+      server.inject(options, (response) => {
+        expect(response.statusCode).to.equal(422);
+        expect(response.result).to.include( {
+                                              "statusCode": 422,
+                                              "error": "Unprocessable Entity",
+                                              "message": "Internal MongoDB error"
+                                          } )
+        done()
+      })
+    })
+  });
+
+  lab.test('tries to update a beer that does not exist', (done) => {
+    var server = new Hapi.Server()
+    server.connection();
+    const db = mongojs('beerstore_test');
+    server.app.db = db;
+    server.register(beers, (err) => {
+      expect(err).to.not.exist()
+      var options = {
+        method: 'PATCH',
+        url: '/beers/4ed2b809d7446b9a0e000015',
+        payload: {
+          name: "Dark Beer from Hell Strikes Back and becomes Lager",
+          type: "Lager",
+          alcohol: "8.8"
+        }
+      }
+      server.inject(options, (response) => {
+        expect(response.statusCode).to.equal(404);
+        expect(response.result).to.include( {
+                                              "statusCode": 404,
+                                              "error": "Not Found"
+                                            } )
+        done()
+      })
+    })
+  });
 
 });
