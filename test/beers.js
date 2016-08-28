@@ -25,12 +25,12 @@ lab.experiment('Beers module', () => {
 
     fixtures.clear(function(err) {
       if (err) {
-        return reply(Boom.badData('Could not clear the database', err));
+        return console.error('Could not clear the database', err);
       }
 
       fixtures.load(__dirname + '/fixtures', function(err) {
         if (err) {
-          return reply(Boom.badData('Could not load fixtures', err))
+          return console.error('Could not load fixtures', err);
         }
 
         done();
