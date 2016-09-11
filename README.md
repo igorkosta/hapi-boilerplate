@@ -35,7 +35,7 @@ From the `hapi-bolerplate` directory run:
 npm install
 ```
 
-# Boilerplate for the next hapi based application
+# Boilerplate for a hapi based application
 Things might change
 
 # Folder structure
